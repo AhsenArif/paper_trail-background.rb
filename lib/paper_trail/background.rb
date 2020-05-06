@@ -77,12 +77,11 @@ module PaperTrail
 
       version_class.after_transaction do
         VersionJob.perform_async(
-          version_class,
-          data.merge(
-            :item_id => record.id,
-            :item_type => record.class.name
+          version_class.to_s,
+          JSON.dump(
+            data.merge(item_id: record.id, item_type: record.class.name)
           ),
-          event
+          event.to_s
         )
       end
     end
